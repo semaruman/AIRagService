@@ -1,10 +1,17 @@
 using AIRagService.Data;
+using AIRagService.Services;
 using Microsoft.EntityFrameworkCore;
+using Pgvector.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
+builder.Services.AddScoped<IDocumentChunkService, DocumentChunkService>();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        o => o.UseVector()));
 
 var app = builder.Build();
 
@@ -19,6 +26,6 @@ await using (var scope = app.Services.CreateAsyncScope())
         logger.LogError("Database connection FAILED");
 }
 
-app.MapGet("/", () => "Hello World!");
+app.MapControllers();
 
 app.Run();
