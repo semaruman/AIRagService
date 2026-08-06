@@ -1,12 +1,22 @@
 using AIRagService.Data;
 using AIRagService.Services;
+using AIRagService.Services.Chunking;
+using AIRagService.Services.Pdf;
 using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 20 * 1024 * 1024;
+});
+
 builder.Services.AddScoped<IDocumentChunkService, DocumentChunkService>();
+builder.Services.AddSingleton<IPdfTextExtractor, PdfPigTextExtractor>();
+builder.Services.AddSingleton<ITextChunker, TextChunker>();
+builder.Services.AddScoped<IDocumentIngestionService, DocumentIngestionService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(

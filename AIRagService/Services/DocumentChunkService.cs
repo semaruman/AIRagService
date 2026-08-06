@@ -21,4 +21,10 @@ public class DocumentChunkService(AppDbContext db) : IDocumentChunkService
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
     }
+
+    public async Task AddRangeAsync(IEnumerable<DocumentChunk> chunks, CancellationToken cancellationToken = default)
+    {
+        await db.DocumentChunks.AddRangeAsync(chunks, cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
+    }
 }
