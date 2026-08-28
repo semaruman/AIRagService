@@ -1,0 +1,155 @@
+/* AIRagService — minimal custom styles (Tailwind handles most layout) */
+
+:root {
+  --sidebar-width: 16rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Sidebar overlay on mobile */
+#sidebar-overlay {
+  transition: opacity 0.2s ease;
+}
+
+#sidebar-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#sidebar {
+  transition: transform 0.25s ease;
+}
+
+@media (max-width: 1023px) {
+  #sidebar {
+    transform: translateX(-100%);
+  }
+  #sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* Drag & drop zone */
+.drop-zone {
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+}
+.drop-zone.drag-over {
+  border-color: #6366f1;
+  background-color: #eef2ff;
+  transform: scale(1.005);
+}
+
+/* Toast animations */
+.toast-enter {
+  animation: toast-in 0.3s ease forwards;
+}
+.toast-exit {
+  animation: toast-out 0.25s ease forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* Loading spinner */
+.spinner {
+  border: 2px solid #e2e8f0;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  width: 1.25rem;
+  height: 1.25rem;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  animation: fade-in 0.2s ease;
+}
+.modal-panel {
+  animation: slide-up 0.25s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Table row hover */
+.data-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+/* Stat card accent line */
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.stat-card.stat-indigo::before { background: linear-gradient(90deg, #6366f1, #818cf8); }
+.stat-card.stat-emerald::before { background: linear-gradient(90deg, #10b981, #34d399); }
+.stat-card.stat-amber::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.stat-card.stat-blue::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.stat-card.stat-rose::before { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+.stat-card.stat-violet::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }

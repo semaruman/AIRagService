@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documents — AIRagService</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body data-page-title="Documents" data-page-subtitle="Upload, manage, and index PDF documents" class="bg-slate-50 text-slate-900 antialiased">
+
+  <div id="app-layout" class="flex min-h-screen">
+    <main id="main-content" class="flex min-h-screen flex-1 flex-col">
+      <div class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+
+        <!-- Upload zone -->
+        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="text-base font-semibold text-slate-900">Upload Document</h2>
+          <p class="mt-1 text-sm text-slate-500">PDF files up to 20 MB. Documents are chunked and indexed automatically.</p>
+
+          <div id="drop-zone" class="drop-zone mt-4 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center hover:border-indigo-400 hover:bg-indigo-50/30">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100">
+              <svg class="h-7 w-7 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+              </svg>
+            </div>
+            <p class="mt-4 text-sm font-medium text-slate-700">Drag & drop your PDF here</p>
+            <p class="mt-1 text-xs text-slate-500">or click to browse</p>
+            <button id="upload-btn" type="button" class="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+              Select File
+            </button>
+            <input id="file-input" type="file" accept=".pdf,application/pdf" class="hidden">
+          </div>
+        </div>
+
+        <!-- Documents table -->
+        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div class="flex flex-col gap-4 border-b border-slate-200 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-base font-semibold text-slate-900">All Documents</h2>
+            <div class="relative">
+              <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+              </svg>
+              <input id="search-input" type="search" placeholder="Search by filename…" class="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:w-64">
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="data-table w-full text-left text-sm">
+              <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <tr>
+                  <th class="px-6 py-3">Name</th>
+                  <th class="px-6 py-3">Size</th>
+                  <th class="px-6 py-3">Status</th>
+                  <th class="px-6 py-3">Chunks</th>
+                  <th class="px-6 py-3">Uploaded</th>
+                  <th class="px-6 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="documents-tbody" class="divide-y divide-slate-100 bg-white"></tbody>
+            </table>
+          </div>
+
+          <div class="flex items-center justify-between border-t border-slate-200 px-6 py-4">
+            <p id="page-info" class="text-sm text-slate-500">Page 1 of 1</p>
+            <div id="pagination" class="flex gap-2"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Document detail modal -->
+  <div id="document-modal" class="fixed inset-0 z-[60] hidden">
+    <div class="modal-backdrop absolute inset-0 bg-slate-900/50"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+      <div id="modal-content" class="modal-panel relative w-full max-w-2xl overflow-hidden rounded-xl bg-white shadow-2xl"></div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/documents.js"></script>
+</body>
+</html>

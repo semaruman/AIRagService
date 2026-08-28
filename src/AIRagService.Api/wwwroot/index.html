@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — AIRagService</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body data-page-title="Dashboard" data-page-subtitle="Overview of your RAG knowledge base" class="bg-slate-50 text-slate-900 antialiased">
+
+  <div id="app-layout" class="flex min-h-screen">
+    <main id="main-content" class="flex min-h-screen flex-1 flex-col lg:ml-0">
+      <div class="flex-1 p-4 sm:p-6 lg:p-8">
+        <div id="stats-cards" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"></div>
+
+        <div id="recent-documents" class="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
