@@ -3,18 +3,56 @@ services:
     image: pgvector/pgvector:pg17
     container_name: airagservice-postgres
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      POSTGRES_DB: airagservice
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-airagservice}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d airagservice"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-airagservice}"]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 10s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airagservice-api
+    ports:
+      - "${API_PORT:-8080}:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${POSTGRES_DB:-airagservice};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}
+      Embedding__Provider: ${Embedding__Provider:-Local}
+      Embedding__Model: ${Embedding__Model:-text-embedding-3-small}
+      Embedding__ApiKey: ${Embedding__ApiKey:-}
+      Embedding__BatchSize: ${Embedding__BatchSize:-64}
+      Embedding__Dimensions: ${Embedding__Dimensions:-1536}
+      Embedding__BaseUrl: ${Embedding__BaseUrl:-https://api.openai.com/v1}
+      Llm__Provider: ${Llm__Provider:-OpenAI}
+      Llm__Model: ${Llm__Model:-gpt-4o-mini}
+      Llm__ApiKey: ${Llm__ApiKey:-}
+      Llm__BaseUrl: ${Llm__BaseUrl:-https://api.openai.com/v1}
+      Llm__Enabled: ${Llm__Enabled:-true}
+      Rag__ChunkSize: ${Rag__ChunkSize:-800}
+      Rag__ChunkOverlap: ${Rag__ChunkOverlap:-120}
+      Rag__TopK: ${Rag__TopK:-5}
+      ApiKeyAuth__Enabled: ${ApiKeyAuth__Enabled:-false}
+      ApiKeyAuth__ApiKey: ${ApiKeyAuth__ApiKey:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   postgres_data:
