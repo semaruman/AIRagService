@@ -1,3 +1,13 @@
 <Solution>
-  <Project Path="AIRagService/AIRagService.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/AIRagService.Api/AIRagService.Api.csproj" />
+    <Project Path="src/AIRagService.Application/AIRagService.Application.csproj" />
+    <Project Path="src/AIRagService.Domain/AIRagService.Domain.csproj" />
+    <Project Path="src/AIRagService.Infrastructure/AIRagService.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AIRagService.ApiTests/AIRagService.ApiTests.csproj" />
+    <Project Path="tests/AIRagService.IntegrationTests/AIRagService.IntegrationTests.csproj" />
+    <Project Path="tests/AIRagService.UnitTests/AIRagService.UnitTests.csproj" />
+  </Folder>
 </Solution>
